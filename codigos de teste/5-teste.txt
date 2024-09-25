@@ -1,0 +1,9 @@
+inteiro x;
+se x < 10 entao
+    mostrar "x é menor que 10";
+senao
+    mostrar "x é maior ou igual a 10";
+"fim"
+
+
+

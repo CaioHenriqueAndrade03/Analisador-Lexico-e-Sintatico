@@ -1,0 +1,14 @@
+
+
+
+
+// Este é um comentário de linha
+/*
+   Este é um comentário de bloco
+   que pode se estender por várias linhas.
+*/
+
+1 + 2
+"um texto de exemplo"
+'um caractere'
+123 45.67 variavel1 variavel_2

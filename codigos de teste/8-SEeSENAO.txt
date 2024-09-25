@@ -1,0 +1,4 @@
+SE a > 10 ENTÃO
+    MOSTRAR "Maior que 10";
+SENAO
+    MOSTRAR "10 ou menos";
