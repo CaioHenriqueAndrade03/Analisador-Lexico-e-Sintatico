@@ -9,3 +9,6 @@ se a == b entao
 senao
     mostrar "Diferentes"
 fim
+
+//bom dia xuxu
+/*vai dormir mane*/
