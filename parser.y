@@ -38,20 +38,19 @@ lista_de_comandos: lista_de_comandos comando
 
 comando:
     expressao TOKEN_OPERACAO_SEPARADOR_COMANDO
-    | comando_condicional
     | comando_enquanto TOKEN_OPERACAO_SEPARADOR_COMANDO
     | comando_repita TOKEN_OPERACAO_SEPARADOR_COMANDO
     | comando_leitura TOKEN_OPERACAO_SEPARADOR_COMANDO
     | comando_escrita TOKEN_OPERACAO_SEPARADOR_COMANDO
     | declaracao_variavel TOKEN_OPERACAO_SEPARADOR_COMANDO
     | bloco_comando TOKEN_OPERACAO_SEPARADOR_COMANDO
+    | comando_se TOKEN_OPERACAO_SEPARADOR_COMANDO
     ;
 
-comando_condicional:
-    TOKEN_SE expressao TOKEN_ENTAO comando
-    |TOKEN_SE expressao TOKEN_ENTAO comando TOKEN_SENAO comando
+comando_se:
+    TOKEN_SE expressao TOKEN_ENTAO lista_de_comandos
+    | TOKEN_SE expressao TOKEN_ENTAO lista_de_comandos TOKEN_SENAO lista_de_comandos
     ;
-
 
 bloco_comando:
     TOKEN_OPERACAO_INICIA_BLOCO_COMANDO lista_de_comandos TOKEN_OPERACAO_FECHA_BLOCO_COMANDO
