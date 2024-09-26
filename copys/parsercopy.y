@@ -1,34 +1,55 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "lexer.h"
+#include "lexer.h"  // Inclua o arquivo do lexer
 
+int yylex(); // Declaração do lexer
 void yyerror(const char *s);
-int yylex();
+
+extern FILE *yyin; // Declara yyin
 %}
 
-%token TOKEN_INTEIRO TOKEN_REAL TOKEN_SE TOKEN_ENTAO TOKEN_SENAO
-%token TOKEN_ENQUANTO TOKEN_REPITA TOKEN_ATE TOKEN_LER TOKEN_MOSTRAR
-%token TOKEN_OPERACAO_SOMA TOKEN_OPERACAO_SUBTRACAO TOKEN_OPERACAO_MULTIPLICACAO
-%token TOKEN_OPERACAO_DIVISAO TOKEN_OPERACAO_E TOKEN_OPERACAO_OU
-%token TOKEN_OPERACAO_MENOR_QUE TOKEN_OPERACAO_MENOR_IGUAL TOKEN_OPERACAO_MAIOR_QUE
-%token TOKEN_OPERACAO_MAIOR_IGUAL TOKEN_OPERACAO_IGUAL TOKEN_OPERACAO_DIFERENTE
-%token TOKEN_OPERACAO_ATRIBUICAO TOKEN_OPERACAO_SEPARADOR_COMANDO
-%token TOKEN_OPERACAO_SEPARADO_IDENTIFICADORES TOKEN_OPERACAO_ABRE_EXPRECAO
-%token TOKEN_OPERACAO_FECHA_EXPRECAO TOKEN_OPERACAO_INICIA_BLOCO_COMANDO
-%token TOKEN_OPERACAO_FECHA_BLOCO_COMANDO TOKEN_IDENTIFICADOR
-%token TOKEN_STRING TOKEN_CHAR
-
-// Definição da precedência dos operadores
-%left TOKEN_OPERACAO_OU 
-%left TOKEN_OPERACAO_E
-%left TOKEN_OPERACAO_IGUAL TOKEN_OPERACAO_DIFERENTE
-%left TOKEN_OPERACAO_MENOR_QUE TOKEN_OPERACAO_MENOR_IGUAL TOKEN_OPERACAO_MAIOR_QUE TOKEN_OPERACAO_MAIOR_IGUAL
 %left TOKEN_OPERACAO_SOMA TOKEN_OPERACAO_SUBTRACAO
 %left TOKEN_OPERACAO_MULTIPLICACAO TOKEN_OPERACAO_DIVISAO
+%left TOKEN_OPERACAO_MAIOR_QUE TOKEN_OPERACAO_MAIOR_IGUAL TOKEN_OPERACAO_MENOR_QUE TOKEN_OPERACAO_MENOR_IGUAL
+%left TOKEN_OPERACAO_E TOKEN_OPERACAO_OU
+%left TOKEN_OPERACAO_IGUAL TOKEN_OPERACAO_DIFERENTE
 
+%token TOKEN_INTEIRO
+%token TOKEN_REAL
+%token TOKEN_SE
+%token TOKEN_ENTAO
+%token TOKEN_SENAO
+%token TOKEN_MOSTRAR
+%token TOKEN_LER
+%token TOKEN_ENQUANTO
+%token TOKEN_REPITA
+%token TOKEN_ATE
+%token TOKEN_OPERACAO_E
+%token TOKEN_OPERACAO_OU
+%token TOKEN_OPERACAO_MENOR_QUE
+%token TOKEN_OPERACAO_MENOR_IGUAL
+%token TOKEN_OPERACAO_MAIOR_QUE
+%token TOKEN_OPERACAO_MAIOR_IGUAL
+%token TOKEN_OPERACAO_IGUAL
+%token TOKEN_OPERACAO_DIFERENTE
+%token TOKEN_OPERACAO_ATRIBUICAO
+%token TOKEN_OPERACAO_SOMA
+%token TOKEN_OPERACAO_SUBTRACAO
+%token TOKEN_OPERACAO_MULTIPLICACAO
+%token TOKEN_OPERACAO_DIVISAO
+%token TOKEN_OPERACAO_SEPARADOR_COMANDO
+%token TOKEN_OPERACAO_SEPARADO_IDENTIFICADORES
+%token TOKEN_OPERACAO_ABRE_EXPRECAO
+%token TOKEN_OPERACAO_FECHA_EXPRECAO
+%token TOKEN_OPERACAO_INICIA_BLOCO_COMANDO
+%token TOKEN_OPERACAO_FECHA_BLOCO_COMANDO
+%token TOKEN_IDENTIFICADOR
+%token TOKEN_STRING
+%token TOKEN_CHAR
 
-%% 
+%%
+
 programa: lista_de_comandos
         ;
 
@@ -49,9 +70,8 @@ comando:
 
 comando_condicional:
     TOKEN_SE expressao TOKEN_ENTAO comando
-    |TOKEN_SE expressao TOKEN_ENTAO comando TOKEN_SENAO comando
+    | TOKEN_SE expressao TOKEN_ENTAO comando TOKEN_SENAO comando
     ;
-
 
 bloco_comando:
     TOKEN_OPERACAO_INICIA_BLOCO_COMANDO lista_de_comandos TOKEN_OPERACAO_FECHA_BLOCO_COMANDO
@@ -101,8 +121,29 @@ expressao: expressao TOKEN_OPERACAO_SOMA expressao
          | TOKEN_CHAR
          ;
 
-%% 
+%%
 
+// Função de erro
 void yyerror(const char *s) {
-    fprintf(stderr, "Erro de análise: %s\n", s);
+    fprintf(stderr, "Erro: %s\n", s);
+}
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Uso: %s <arquivo_de_entrada>\n", argv[0]);
+        return 1;
+    }
+    
+    FILE *file = fopen(argv[1], "r");
+    if (!file) {
+        perror("Não foi possível abrir o arquivo de entrada");
+        return 1;
+    }
+
+    yyin = file; // Redireciona a entrada do lexer para o arquivo
+
+    yyparse(); // Chama o parser
+
+    fclose(file);
+    return 0;
 }

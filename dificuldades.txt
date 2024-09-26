@@ -1,2 +1,0 @@
-Dificuldade na regra de compilação de comandos condicionais no parser.y
-Dificuldade na movimentação da função main para do lexer para o parser.y

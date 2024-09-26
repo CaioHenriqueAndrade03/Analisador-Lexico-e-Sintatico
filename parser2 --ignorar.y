@@ -60,7 +60,9 @@ comando:
     ;
 
 comando_condicional:
+    comando_condicional:
     TOKEN_SE expressao TOKEN_ENTAO comando
+    ;
     {
         Nodo* novo_no = malloc(sizeof(Nodo));
         novo_no->tipo = "condicional";
@@ -68,7 +70,7 @@ comando_condicional:
         novo_no->proximo = $4; // Comando
         $$ = novo_no; // Atribuindo o novo nó a $$
     }
-    | TOKEN_SE expressao TOKEN_ENTAO comando TOKEN_SENAO comando
+   |TOKEN_SE expressao TOKEN_ENTAO comando TOKEN_SENAO comando
     {
         Nodo* novo_no = malloc(sizeof(Nodo));
         novo_no->tipo = "condicional";
