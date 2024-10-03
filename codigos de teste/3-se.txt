@@ -1,18 +1,18 @@
-inteiro i;
+INTEIRO i;
 
-ler(i);
+LER(i);
 
-se i>19
-  entao
-    se i<30
-	  entao
-	    mostrar (25);
-	  senao
-	    mostrar(35);
-  senao
-    se i<10
-	  entao
-	    mostrar(5);
-	  senao
-	    mostrar(15);
-mostrar (-1);
+SE i>19
+  ENTAO
+    SE i<30
+	  ENTAO
+	    MOSTRAR (25);
+	  SENAO
+	    MOSTRAR (35);
+  SENAO
+    SE i < 10
+	  ENTAO
+	    MOSTRAR(5);
+	  SENAO
+	    MOSTRAR(15);
+MOSTRAR (-1);

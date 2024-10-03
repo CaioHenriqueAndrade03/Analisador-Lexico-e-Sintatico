@@ -7,3 +7,4 @@ real comprimento, altura;
     x = 10;
     mostrar x;
 }
+/* alo */

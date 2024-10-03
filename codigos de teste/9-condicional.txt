@@ -1,14 +1,14 @@
-se 5 < 10 entao
-    mostrar "Menor que 10"
-senao
-    mostrar "Maior ou igual a 10"
-fim
+SE 5 < 10 ENTAO
+    MOSTRAR( "Menor que 10")
+SENAO
+    MOSTRAR  ("Maior ou igual a 10")
 
-se a == b entao
-    mostrar "Iguais"
-senao
-    mostrar "Diferentes"
-fim
+
+SE a == b ENTAO
+    MOSTRAR ("Iguais")
+SENAO
+    MOSTRAR ("Diferentes")
+
 
 //bom dia xuxu
 /*vai dormir mane*/

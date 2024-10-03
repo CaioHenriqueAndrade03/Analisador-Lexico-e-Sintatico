@@ -1,4 +1,10 @@
-SE a > 10 ENTÃO
-    MOSTRAR "Maior que 10";
+SE a > 10 
+ENTAO
+    MOSTRAR("Maior que 10");
+   
 SENAO
-    MOSTRAR "10 ou menos";
+    MOSTRAR("10 ou menos");
+     SE b < 5 ENTAO
+        MOSTRAR("B é menor que 5");
+    SENAO
+        MOSTRAR("B é 5 ou maior");

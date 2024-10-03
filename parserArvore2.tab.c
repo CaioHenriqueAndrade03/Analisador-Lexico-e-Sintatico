@@ -67,16 +67,105 @@
 
 
 /* First part of user prologue.  */
-#line 1 "parser.y"
+#line 1 "parserArvore2.y"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "lexer.h"
+
+extern FILE *yyin; // Declaração externa para yyin
+extern char *yytext; // Declaração externa para yytext
 
 void yyerror(const char *s);
 int yylex();
 
-#line 80 "parser.tab.c"
+#define YYSTYPE No*
+
+typedef enum {
+    NO_DECLARACAO_VARIAVEL,
+    NO_ATRIBUICAO,
+    NO_CONDICIONAL,
+    NO_ESCRITA,
+    NO_LEITURA,
+    NO_EXPRESSAO,
+    NO_TIPO,
+    NO_IDENTIFICADOR,
+    NO_STRING,
+    NO_CHAR,
+    NO_INTEIRO,
+    NO_REAL,
+    NO_BLOCO_COMANDO,
+    NO_FUNCIONAMENTO,  
+    NO_LOOP,
+    NO_PARAMETRO,    
+    NO_ERRO,    
+} TipoNo;
+
+typedef struct No {
+    TipoNo tipo;
+    char *valor;
+    struct No *filhos[3];
+    struct No *irmao;
+    int num_filhos;
+} No;
+
+No* criar_no(TipoNo tipo, char *valor) {
+    No *no = (No *)malloc(sizeof(No));
+    no->tipo = tipo;
+    no->valor = valor ? strdup(valor) : NULL;
+    no->num_filhos = 0;
+    for (int i = 0; i < 3; i++) no->filhos[i] = NULL;
+    no->irmao = NULL;
+    return no;
+}
+
+void imprimir_arvore(No *no, int nivel) {
+    if (no == NULL) return;
+
+    for (int i = 0; i < nivel; i++) {
+        printf("  ");
+    }
+
+    // Usar um switch ou um array para mapear tipos a strings
+    const char *tipo_str;
+    switch (no->tipo) {
+        case NO_DECLARACAO_VARIAVEL: tipo_str = "Declaração de Variável"; break;
+        case NO_ATRIBUICAO: tipo_str = "Atribuição"; break;
+        case NO_CONDICIONAL: tipo_str = "Condicional"; break;
+        case NO_ESCRITA: tipo_str = "Escrita"; break;
+        case NO_LEITURA: tipo_str = "Leitura"; break;
+        case NO_EXPRESSAO: tipo_str = "Expressão"; break;
+        case NO_TIPO: tipo_str = "Tipo"; break;
+        case NO_IDENTIFICADOR: tipo_str = "Identificador"; break;
+        case NO_STRING: tipo_str = "String"; break;
+        case NO_CHAR: tipo_str = "Char"; break;
+        case NO_INTEIRO: tipo_str = "Inteiro"; break;
+        case NO_REAL: tipo_str = "Real"; break;
+        case NO_BLOCO_COMANDO: tipo_str = "Bloco de Comando"; break;
+        case NO_FUNCIONAMENTO: tipo_str = "Funcionamento"; break;
+        case NO_LOOP: tipo_str = "Loop"; break;
+        case NO_PARAMETRO: tipo_str = "Parâmetro"; break;
+        case NO_ERRO: tipo_str = "Erro"; break;
+        default: tipo_str = "Desconhecido"; break;
+    }
+
+    printf("%s: %s\n", tipo_str, no->valor ? no->valor : "NULL");
+
+    for (int i = 0; i < no->num_filhos; i++) {
+        imprimir_arvore(no->filhos[i], nivel + 1);
+    }
+
+    imprimir_arvore(no->irmao, nivel);
+}
+
+
+
+
+static No *raiz = NULL;
+
+
+#line 169 "parserArvore2.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -99,7 +188,7 @@ int yylex();
 #  endif
 # endif
 
-#include "parser.tab.h"
+#include "parserArvore2.tab.h"
 /* Symbol kind.  */
 enum yysymbol_kind_t
 {
@@ -143,16 +232,29 @@ enum yysymbol_kind_t
   YYSYMBOL_programa = 36,                  /* programa  */
   YYSYMBOL_lista_de_comandos = 37,         /* lista_de_comandos  */
   YYSYMBOL_comando = 38,                   /* comando  */
-  YYSYMBOL_comando_se = 39,                /* comando_se  */
-  YYSYMBOL_bloco_comando = 40,             /* bloco_comando  */
-  YYSYMBOL_comando_enquanto = 41,          /* comando_enquanto  */
-  YYSYMBOL_comando_repita = 42,            /* comando_repita  */
-  YYSYMBOL_comando_leitura = 43,           /* comando_leitura  */
-  YYSYMBOL_comando_escrita = 44,           /* comando_escrita  */
-  YYSYMBOL_declaracao_variavel = 45,       /* declaracao_variavel  */
-  YYSYMBOL_tipo = 46,                      /* tipo  */
-  YYSYMBOL_lista_identificadores = 47,     /* lista_identificadores  */
-  YYSYMBOL_expressao = 48                  /* expressao  */
+  YYSYMBOL_comando_atribuir = 39,          /* comando_atribuir  */
+  YYSYMBOL_comando_condicional = 40,       /* comando_condicional  */
+  YYSYMBOL_bloco_comando = 41,             /* bloco_comando  */
+  YYSYMBOL_comando_enquanto = 42,          /* comando_enquanto  */
+  YYSYMBOL_comando_repita = 43,            /* comando_repita  */
+  YYSYMBOL_comando_leitura = 44,           /* comando_leitura  */
+  YYSYMBOL_comando_escrita = 45,           /* comando_escrita  */
+  YYSYMBOL_declaracao_variavel = 46,       /* declaracao_variavel  */
+  YYSYMBOL_tipo = 47,                      /* tipo  */
+  YYSYMBOL_lista_identificadores = 48,     /* lista_identificadores  */
+  YYSYMBOL_expressao = 49,                 /* expressao  */
+  YYSYMBOL_expressao_operacao_soma = 50,   /* expressao_operacao_soma  */
+  YYSYMBOL_expressao_operacao_subtracao = 51, /* expressao_operacao_subtracao  */
+  YYSYMBOL_expressao_operacao_multiplicacao = 52, /* expressao_operacao_multiplicacao  */
+  YYSYMBOL_expressao_operacao_divisao = 53, /* expressao_operacao_divisao  */
+  YYSYMBOL_expressao_operacao_e = 54,      /* expressao_operacao_e  */
+  YYSYMBOL_expressao_operacao_ou = 55,     /* expressao_operacao_ou  */
+  YYSYMBOL_expressao_operacao_maior_que = 56, /* expressao_operacao_maior_que  */
+  YYSYMBOL_expressao_operacao_menor_que = 57, /* expressao_operacao_menor_que  */
+  YYSYMBOL_expressao_operacao_maior_igual = 58, /* expressao_operacao_maior_igual  */
+  YYSYMBOL_expressao_operacao_menor_igual = 59, /* expressao_operacao_menor_igual  */
+  YYSYMBOL_expressao_operacao_igual = 60,  /* expressao_operacao_igual  */
+  YYSYMBOL_expressao_operacao_diferente = 61 /* expressao_operacao_diferente  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -478,18 +580,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  35
+#define YYFINAL  45
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   266
+#define YYLAST   201
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  35
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  14
+#define YYNNTS  27
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  43
+#define YYNRULES  54
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  90
+#define YYNSTATES  105
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   289
@@ -539,13 +641,14 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,    32,    32,    35,    36,    40,    41,    42,    43,    44,
-      45,    46,    47,    51,    52,    56,    59,    62,    63,    66,
-      69,    72,    75,    76,    79,    80,    83,    84,    85,    86,
-      87,    88,    89,    90,    91,    92,    93,    94,    95,    96,
-      97,    98,    99,   100
+       0,   123,   123,   129,   132,   143,   146,   149,   152,   155,
+     158,   161,   164,   167,   173,   183,   189,   200,   206,   215,
+     221,   231,   240,   245,   254,   265,   268,   275,   280,   299,
+     303,   307,   310,   313,   316,   319,   322,   325,   328,   331,
+     334,   337,   340,   346,   355,   364,   373,   382,   391,   400,
+     409,   418,   427,   436,   445
 };
 #endif
 
@@ -576,9 +679,16 @@ static const char *const yytname[] =
   "TOKEN_OPERACAO_INICIA_BLOCO_COMANDO",
   "TOKEN_OPERACAO_FECHA_BLOCO_COMANDO", "TOKEN_IDENTIFICADOR",
   "TOKEN_STRING", "TOKEN_CHAR", "$accept", "programa", "lista_de_comandos",
-  "comando", "comando_se", "bloco_comando", "comando_enquanto",
-  "comando_repita", "comando_leitura", "comando_escrita",
-  "declaracao_variavel", "tipo", "lista_identificadores", "expressao", YY_NULLPTR
+  "comando", "comando_atribuir", "comando_condicional", "bloco_comando",
+  "comando_enquanto", "comando_repita", "comando_leitura",
+  "comando_escrita", "declaracao_variavel", "tipo",
+  "lista_identificadores", "expressao", "expressao_operacao_soma",
+  "expressao_operacao_subtracao", "expressao_operacao_multiplicacao",
+  "expressao_operacao_divisao", "expressao_operacao_e",
+  "expressao_operacao_ou", "expressao_operacao_maior_que",
+  "expressao_operacao_menor_que", "expressao_operacao_maior_igual",
+  "expressao_operacao_menor_igual", "expressao_operacao_igual",
+  "expressao_operacao_diferente", YY_NULLPTR
 };
 
 static const char *
@@ -588,12 +698,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-26)
+#define YYPACT_NINF (-28)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-24)
+#define YYTABLE_NINF (-26)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -602,15 +712,17 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-     120,   -25,   -24,    -1,    -1,   120,   -16,   -15,    -1,   120,
-     -26,   -26,   -26,    14,   120,   -26,    -7,    -3,     0,     2,
-       4,    12,    16,     8,   194,   -26,   -26,   121,   142,    38,
-      -6,    17,    -1,   160,    13,   -26,   -26,   -26,   -26,   -26,
-     -26,   -26,   -26,   -26,   -26,    23,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   -26,   120,
-     120,    -1,    -1,    36,   177,   -26,   -26,    34,   -10,   -10,
-     -26,   -26,   232,   220,    21,    21,    21,    21,   244,   244,
-      78,    88,   208,   208,   -26,   -26,   -26,   120,   -26,   120
+      73,   -27,   -28,     8,   -14,    73,    -4,    -1,    73,    18,
+      47,    73,   -28,    13,    22,    24,    30,    31,    36,    57,
+      60,    62,   139,   -28,   -28,   -28,   -28,   -28,   -28,   -28,
+     -28,   -28,   -28,   -28,   -28,   -28,   -28,    93,     8,    82,
+      -6,    63,     0,     4,     8,   -28,   -28,   -28,   -28,   -28,
+     -28,   -28,   -28,   -28,   -28,   -28,    69,     8,     8,     8,
+       8,     8,     8,     8,     8,     8,     8,     8,     8,   -28,
+      73,   105,     8,     8,    71,    72,   122,   -28,   153,    70,
+      26,    26,   -28,   -28,   177,   165,    15,    15,    15,    75,
+      39,    39,    14,    74,   153,   153,   -28,   -28,   -28,   -28,
+      73,   100,    73,   101,   -28
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -618,29 +730,33 @@ static const yytype_int16 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,    39,    40,     0,     0,     0,     0,     0,     0,     0,
-      41,    42,    43,     0,     2,     4,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    39,    40,     0,     0,     0,
-       0,     0,     0,     0,     0,     1,     3,    12,    11,     6,
-       7,     8,     9,    10,    24,    21,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     5,     0,
-       0,     0,     0,     0,     0,    38,    15,     0,    26,    27,
-      28,    29,    30,    31,    32,    33,    34,    35,    36,    37,
-      13,     0,    18,    17,    19,    20,    25,     0,    16,    14
+       0,    30,    26,     0,     0,     0,     0,     0,     0,    29,
+       0,     2,     3,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,    31,    32,    33,    34,    35,    36,    37,
+      38,    39,    40,    41,    42,    30,    29,     0,     0,     0,
+       0,     0,     0,     0,     0,     1,     4,    13,    12,    11,
+       6,     7,     8,     9,    10,    27,    24,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     5,
+       0,     0,     0,     0,     0,     0,     0,    17,    14,     0,
+      43,    44,    45,    46,    47,    48,    50,    52,    49,    51,
+      53,    54,    15,     0,    20,    19,    21,    23,    22,    28,
+       0,     0,    16,     0,    18
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -26,   -26,    -8,    -5,   -26,    62,   -26,   -26,   -26,   -26,
-     -26,   -26,   -26,     7
+     -28,   -28,    -7,    -5,   -28,   -28,    -3,   -28,   -28,   -28,
+     -28,   -28,   -28,   -28,     7,   -28,   -28,   -28,   -28,   -28,
+     -28,   -28,   -28,   -28,   -28,   -28,   -28
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,    13,    14,    15,    16,    17,    18,    19,    20,    21,
-      22,    23,    45,    24
+       0,    10,    11,    12,    13,    14,    15,    16,    17,    18,
+      19,    20,    21,    56,    22,    23,    24,    25,    26,    27,
+      28,    29,    30,    31,    32,    33,    34
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -648,99 +764,91 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      29,    34,    25,    26,    62,    48,    49,   -22,   -23,    36,
-      27,    28,    31,    32,    35,    33,     1,     2,     3,    37,
-      38,     4,     5,    38,     6,     7,    39,     8,    40,    36,
-      41,    10,    11,    12,    46,    47,    48,    49,    42,    64,
-      44,     8,    43,     9,    66,    10,    11,    12,    61,    63,
-      67,    80,    81,    68,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78,    79,    84,    86,    30,    82,    83,
-       0,     0,     0,     0,     0,    36,    36,     0,     0,    89,
-       0,     1,     2,     3,    36,    87,     4,     5,     0,     6,
-       7,     1,     2,     3,     0,     0,     4,     5,     0,     6,
-       7,     0,     0,     0,     0,     0,     8,     0,     9,     0,
-      10,    11,    12,     0,     0,     0,     8,     0,     9,    88,
-      10,    11,    12,     1,     2,     3,     0,    59,     4,     5,
-       0,     6,     7,     0,    46,    47,    48,    49,    50,    51,
-      52,    53,    54,    55,    56,    57,     0,     0,     8,     0,
-       9,     0,    10,    11,    12,    46,    47,    48,    49,    50,
-      51,    52,    53,    54,    55,    56,    57,     0,     0,     0,
-       0,     0,    60,    46,    47,    48,    49,    50,    51,    52,
-      53,    54,    55,    56,    57,     0,     0,     0,     0,    65,
-      46,    47,    48,    49,    50,    51,    52,    53,    54,    55,
-      56,    57,     0,     0,     0,     0,    85,    46,    47,    48,
-      49,    50,    51,    52,    53,    54,    55,    56,    57,     0,
-      58,    46,    47,    48,    49,    50,    51,    52,    53,    54,
-      55,    56,    57,    46,    47,    48,    49,    50,     0,    52,
-      53,    54,    55,    56,    57,    46,    47,    48,    49,     0,
-       0,    52,    53,    54,    55,    56,    57,    46,    47,    48,
-      49,     0,     0,    52,    53,    54,    55
+      39,    43,    40,    35,    73,   -25,    46,     1,     2,     3,
+      37,    35,     4,     5,    38,     6,     7,     1,     2,     3,
+      49,   100,     4,     5,    41,     6,     7,    42,    57,    58,
+      59,    60,    36,    75,     8,    77,     9,    66,    46,    47,
+      36,    59,    60,    44,     8,    71,     9,    45,    48,    76,
+      49,    78,    57,    58,    59,    60,    50,    51,    63,    64,
+      65,    66,    52,    92,    80,    81,    82,    83,    84,    85,
+      86,    87,    88,    89,    90,    91,     1,     2,     3,    94,
+      95,     4,     5,    53,     6,     7,    54,    46,    57,    58,
+      59,    60,    72,   102,    55,    74,    79,    46,   103,    70,
+      96,    97,    99,     8,   101,     9,    57,    58,    59,    60,
+      61,    62,    63,    64,    65,    66,    67,    68,    57,    58,
+      59,    60,    61,    62,    63,    64,    65,    66,    67,    68,
+       8,     0,   104,     0,    93,    57,    58,    59,    60,    61,
+      62,    63,    64,    65,    66,    67,    68,     0,     0,     0,
+       0,    98,    57,    58,    59,    60,    61,    62,    63,    64,
+      65,    66,    67,    68,     0,    69,    57,    58,    59,    60,
+      61,    62,    63,    64,    65,    66,    67,    68,    57,    58,
+      59,    60,    61,     0,    63,    64,    65,    66,    67,    68,
+      57,    58,    59,    60,     0,     0,    63,    64,    65,    66,
+      67,    68
 };
 
 static const yytype_int8 yycheck[] =
 {
-       5,     9,     3,     4,    10,    15,    16,    32,    32,    14,
-       3,     4,    28,    28,     0,     8,     3,     4,     5,    26,
-      26,     8,     9,    26,    11,    12,    26,    28,    26,    34,
-      26,    32,    33,    34,    13,    14,    15,    16,    26,    32,
-      32,    28,    26,    30,    31,    32,    33,    34,    10,    32,
-      27,    59,    60,    46,    47,    48,    49,    50,    51,    52,
-      53,    54,    55,    56,    57,    29,    32,     5,    61,    62,
-      -1,    -1,    -1,    -1,    -1,    80,    81,    -1,    -1,    87,
-      -1,     3,     4,     5,    89,     7,     8,     9,    -1,    11,
-      12,     3,     4,     5,    -1,    -1,     8,     9,    -1,    11,
-      12,    -1,    -1,    -1,    -1,    -1,    28,    -1,    30,    -1,
-      32,    33,    34,    -1,    -1,    -1,    28,    -1,    30,    31,
-      32,    33,    34,     3,     4,     5,    -1,     6,     8,     9,
-      -1,    11,    12,    -1,    13,    14,    15,    16,    17,    18,
-      19,    20,    21,    22,    23,    24,    -1,    -1,    28,    -1,
-      30,    -1,    32,    33,    34,    13,    14,    15,    16,    17,
+       5,     8,     5,     3,    10,    32,    11,     3,     4,     5,
+       3,     3,     8,     9,    28,    11,    12,     3,     4,     5,
+      26,     7,     8,     9,    28,    11,    12,    28,    13,    14,
+      15,    16,    32,    33,    30,    31,    32,    22,    43,    26,
+      32,    15,    16,    25,    30,    38,    32,     0,    26,    42,
+      26,    44,    13,    14,    15,    16,    26,    26,    19,    20,
+      21,    22,    26,    70,    57,    58,    59,    60,    61,    62,
+      63,    64,    65,    66,    67,    68,     3,     4,     5,    72,
+      73,     8,     9,    26,    11,    12,    26,    92,    13,    14,
+      15,    16,    10,   100,    32,    32,    27,   102,   101,     6,
+      29,    29,    32,    30,    30,    32,    13,    14,    15,    16,
+      17,    18,    19,    20,    21,    22,    23,    24,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      30,    -1,    31,    -1,    29,    13,    14,    15,    16,    17,
       18,    19,    20,    21,    22,    23,    24,    -1,    -1,    -1,
-      -1,    -1,    30,    13,    14,    15,    16,    17,    18,    19,
-      20,    21,    22,    23,    24,    -1,    -1,    -1,    -1,    29,
-      13,    14,    15,    16,    17,    18,    19,    20,    21,    22,
-      23,    24,    -1,    -1,    -1,    -1,    29,    13,    14,    15,
-      16,    17,    18,    19,    20,    21,    22,    23,    24,    -1,
-      26,    13,    14,    15,    16,    17,    18,    19,    20,    21,
-      22,    23,    24,    13,    14,    15,    16,    17,    -1,    19,
-      20,    21,    22,    23,    24,    13,    14,    15,    16,    -1,
-      -1,    19,    20,    21,    22,    23,    24,    13,    14,    15,
-      16,    -1,    -1,    19,    20,    21,    22
+      -1,    29,    13,    14,    15,    16,    17,    18,    19,    20,
+      21,    22,    23,    24,    -1,    26,    13,    14,    15,    16,
+      17,    18,    19,    20,    21,    22,    23,    24,    13,    14,
+      15,    16,    17,    -1,    19,    20,    21,    22,    23,    24,
+      13,    14,    15,    16,    -1,    -1,    19,    20,    21,    22,
+      23,    24
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,     4,     5,     8,     9,    11,    12,    28,    30,
-      32,    33,    34,    36,    37,    38,    39,    40,    41,    42,
-      43,    44,    45,    46,    48,     3,     4,    48,    48,    38,
-      40,    28,    28,    48,    37,     0,    38,    26,    26,    26,
-      26,    26,    26,    26,    32,    47,    13,    14,    15,    16,
-      17,    18,    19,    20,    21,    22,    23,    24,    26,     6,
-      30,    10,    10,    32,    48,    29,    31,    27,    48,    48,
-      48,    48,    48,    48,    48,    48,    48,    48,    48,    48,
-      37,    37,    48,    48,    29,    29,    32,     7,    31,    37
+       0,     3,     4,     5,     8,     9,    11,    12,    30,    32,
+      36,    37,    38,    39,    40,    41,    42,    43,    44,    45,
+      46,    47,    49,    50,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    61,     3,    32,    49,    28,    38,
+      41,    28,    28,    37,    25,     0,    38,    26,    26,    26,
+      26,    26,    26,    26,    26,    32,    48,    13,    14,    15,
+      16,    17,    18,    19,    20,    21,    22,    23,    24,    26,
+       6,    49,    10,    10,    32,    33,    49,    31,    49,    27,
+      49,    49,    49,    49,    49,    49,    49,    49,    49,    49,
+      49,    49,    37,    29,    49,    49,    29,    29,    29,    32,
+       7,    30,    37,    41,    31
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
        0,    35,    36,    37,    37,    38,    38,    38,    38,    38,
-      38,    38,    38,    39,    39,    40,    41,    42,    42,    43,
-      44,    45,    46,    46,    47,    47,    48,    48,    48,    48,
-      48,    48,    48,    48,    48,    48,    48,    48,    48,    48,
-      48,    48,    48,    48
+      38,    38,    38,    38,    39,    40,    40,    41,    42,    43,
+      43,    44,    45,    45,    46,    47,    47,    48,    48,    49,
+      49,    49,    49,    49,    49,    49,    49,    49,    49,    49,
+      49,    49,    49,    50,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    61
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     2,     1,     2,     2,     2,     2,     2,
-       2,     2,     2,     4,     6,     3,     5,     4,     4,     4,
-       4,     2,     1,     1,     1,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     3,     1,
-       1,     1,     1,     1
+       0,     2,     1,     1,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     3,     4,     6,     3,     7,     4,
+       4,     4,     4,     4,     2,     1,     1,     1,     3,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3
 };
 
 
@@ -1203,8 +1311,513 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+  case 2: /* programa: lista_de_comandos  */
+#line 123 "parserArvore2.y"
+                            {
+    raiz = yyvsp[0];
+}
+#line 1320 "parserArvore2.tab.c"
+    break;
 
-#line 1208 "parser.tab.c"
+  case 3: /* lista_de_comandos: comando  */
+#line 129 "parserArvore2.y"
+            {
+        yyval = yyvsp[0];
+    }
+#line 1328 "parserArvore2.tab.c"
+    break;
+
+  case 4: /* lista_de_comandos: lista_de_comandos comando  */
+#line 132 "parserArvore2.y"
+                                {
+        No *ultimo = yyvsp[-1];
+        while (ultimo->irmao != NULL) {
+            ultimo = ultimo->irmao;
+        }
+        ultimo->irmao = yyvsp[0];
+        yyval = yyvsp[-1];
+    }
+#line 1341 "parserArvore2.tab.c"
+    break;
+
+  case 5: /* comando: expressao TOKEN_OPERACAO_SEPARADOR_COMANDO  */
+#line 143 "parserArvore2.y"
+                                               {
+        yyval = yyvsp[-1];
+    }
+#line 1349 "parserArvore2.tab.c"
+    break;
+
+  case 6: /* comando: comando_enquanto TOKEN_OPERACAO_SEPARADOR_COMANDO  */
+#line 146 "parserArvore2.y"
+                                                        {
+        yyval = yyvsp[-1];
+    }
+#line 1357 "parserArvore2.tab.c"
+    break;
+
+  case 7: /* comando: comando_repita TOKEN_OPERACAO_SEPARADOR_COMANDO  */
+#line 149 "parserArvore2.y"
+                                                      {
+        yyval = yyvsp[-1];
+    }
+#line 1365 "parserArvore2.tab.c"
+    break;
+
+  case 8: /* comando: comando_leitura TOKEN_OPERACAO_SEPARADOR_COMANDO  */
+#line 152 "parserArvore2.y"
+                                                       {
+        yyval = yyvsp[-1];
+    }
+#line 1373 "parserArvore2.tab.c"
+    break;
+
+  case 9: /* comando: comando_escrita TOKEN_OPERACAO_SEPARADOR_COMANDO  */
+#line 155 "parserArvore2.y"
+                                                       {
+        yyval = yyvsp[-1];
+    }
+#line 1381 "parserArvore2.tab.c"
+    break;
+
+  case 10: /* comando: declaracao_variavel TOKEN_OPERACAO_SEPARADOR_COMANDO  */
+#line 158 "parserArvore2.y"
+                                                           {
+        yyval = yyvsp[-1];
+    }
+#line 1389 "parserArvore2.tab.c"
+    break;
+
+  case 11: /* comando: bloco_comando TOKEN_OPERACAO_SEPARADOR_COMANDO  */
+#line 161 "parserArvore2.y"
+                                                     {
+        yyval = yyvsp[-1];
+    }
+#line 1397 "parserArvore2.tab.c"
+    break;
+
+  case 12: /* comando: comando_condicional TOKEN_OPERACAO_SEPARADOR_COMANDO  */
+#line 164 "parserArvore2.y"
+                                                           {
+        yyval = yyvsp[-1];
+    }
+#line 1405 "parserArvore2.tab.c"
+    break;
+
+  case 13: /* comando: comando_atribuir TOKEN_OPERACAO_SEPARADOR_COMANDO  */
+#line 167 "parserArvore2.y"
+                                                        {
+        yyval = yyvsp[-1];
+    }
+#line 1413 "parserArvore2.tab.c"
+    break;
+
+  case 14: /* comando_atribuir: TOKEN_IDENTIFICADOR TOKEN_OPERACAO_ATRIBUICAO expressao  */
+#line 173 "parserArvore2.y"
+                                                            {
+        yyval = criar_no(NO_ATRIBUICAO, strdup("Atribuição")); 
+        yyval->filhos[0] = criar_no(NO_IDENTIFICADOR, strdup(yytext)); 
+        yyval->filhos[1] = yyvsp[0]; 
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1424 "parserArvore2.tab.c"
+    break;
+
+  case 15: /* comando_condicional: TOKEN_SE expressao TOKEN_ENTAO lista_de_comandos  */
+#line 183 "parserArvore2.y"
+                                                     {
+        yyval = criar_no(NO_CONDICIONAL,strdup("Comando condicional"));
+        yyval->filhos[0] = yyvsp[-2]; // Expressão
+        yyval->filhos[1] = yyvsp[0]; // Lista de comandos
+        yyval->num_filhos = 2; // Ajuste para o número correto
+    }
+#line 1435 "parserArvore2.tab.c"
+    break;
+
+  case 16: /* comando_condicional: TOKEN_SE expressao TOKEN_ENTAO lista_de_comandos TOKEN_SENAO lista_de_comandos  */
+#line 189 "parserArvore2.y"
+                                                                                     {
+        yyval = criar_no(NO_CONDICIONAL, strdup("Comando condicional SENAO"));
+        yyval->filhos[0] = yyvsp[-4]; // Expressão
+        yyval->filhos[1] = yyvsp[-2]; // Lista de comandos
+        yyval->filhos[2] = yyvsp[0]; // Lista de comandos do SENA
+        yyval->num_filhos = 3; // Ajuste para o número correto
+    }
+#line 1447 "parserArvore2.tab.c"
+    break;
+
+  case 17: /* bloco_comando: TOKEN_OPERACAO_INICIA_BLOCO_COMANDO lista_de_comandos TOKEN_OPERACAO_FECHA_BLOCO_COMANDO  */
+#line 200 "parserArvore2.y"
+                                                                                             {
+        yyval = yyvsp[-1];
+    }
+#line 1455 "parserArvore2.tab.c"
+    break;
+
+  case 18: /* comando_enquanto: TOKEN_ENQUANTO TOKEN_OPERACAO_ABRE_EXPRECAO expressao TOKEN_OPERACAO_FECHA_EXPRECAO TOKEN_OPERACAO_INICIA_BLOCO_COMANDO bloco_comando TOKEN_OPERACAO_FECHA_BLOCO_COMANDO  */
+#line 206 "parserArvore2.y"
+                                                                                                                                                                             {
+        yyval = criar_no(NO_LOOP, strdup("Enquanto")); // Ajuste no tipo, se necessário
+        yyval->filhos[0] = yyvsp[-4]; // Expressão
+        yyval->filhos[1] = yyvsp[-1]; // Bloco de comandos
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1466 "parserArvore2.tab.c"
+    break;
+
+  case 19: /* comando_repita: TOKEN_REPITA bloco_comando TOKEN_ATE expressao  */
+#line 215 "parserArvore2.y"
+                                                   {
+        yyval = criar_no(NO_LOOP, strdup("Repita ate")); // Ajuste no tipo, se necessário
+        yyval->filhos[0] = yyvsp[-3]; // Bloco
+        yyval->filhos[1] = yyvsp[0]; // Expressão
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1477 "parserArvore2.tab.c"
+    break;
+
+  case 20: /* comando_repita: TOKEN_REPITA comando TOKEN_ATE expressao  */
+#line 221 "parserArvore2.y"
+                                               {
+        yyval = criar_no(NO_LOOP, strdup("Repita ate")); // Ajuste no tipo, se necessário
+        yyval->filhos[0] = yyvsp[-2]; // Comando
+        yyval->filhos[1] = yyvsp[0]; // Expressão
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1488 "parserArvore2.tab.c"
+    break;
+
+  case 21: /* comando_leitura: TOKEN_LER TOKEN_OPERACAO_ABRE_EXPRECAO TOKEN_IDENTIFICADOR TOKEN_OPERACAO_FECHA_EXPRECAO  */
+#line 231 "parserArvore2.y"
+                                                                                             {
+        yyval = criar_no(NO_LEITURA, strdup("Leitura"));
+        yyval->filhos[0] = criar_no(NO_IDENTIFICADOR, strdup(yytext));
+        yyval->num_filhos = 1; // Define o número correto de filhos
+    }
+#line 1498 "parserArvore2.tab.c"
+    break;
+
+  case 22: /* comando_escrita: TOKEN_MOSTRAR TOKEN_OPERACAO_ABRE_EXPRECAO expressao TOKEN_OPERACAO_FECHA_EXPRECAO  */
+#line 240 "parserArvore2.y"
+                                                                                       {
+        yyval = criar_no(NO_ESCRITA, strdup("Escrita"));
+        yyval->filhos[0] = yyvsp[-1]; // Expressão
+        yyval->num_filhos = 1; // Define o número correto de filhos
+    }
+#line 1508 "parserArvore2.tab.c"
+    break;
+
+  case 23: /* comando_escrita: TOKEN_MOSTRAR TOKEN_OPERACAO_ABRE_EXPRECAO TOKEN_STRING TOKEN_OPERACAO_FECHA_EXPRECAO  */
+#line 245 "parserArvore2.y"
+                                                                                           {
+        yyval = criar_no(NO_ESCRITA, strdup("Escrita"));
+        yyval->filhos[0] = yyvsp[-1]; // Expressão
+        yyval->num_filhos = 1; // Define o número correto de filhos
+    }
+#line 1518 "parserArvore2.tab.c"
+    break;
+
+  case 24: /* declaracao_variavel: tipo lista_identificadores  */
+#line 254 "parserArvore2.y"
+                               {
+        yyval = criar_no(NO_DECLARACAO_VARIAVEL, strdup("Declaração de Variáveis"));
+        yyval->filhos[0] = yyvsp[-1]; // Tipo
+        yyval->filhos[1] = yyvsp[0]; // Lista de identificadores
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1529 "parserArvore2.tab.c"
+    break;
+
+  case 25: /* tipo: TOKEN_INTEIRO  */
+#line 265 "parserArvore2.y"
+                  {
+        yyval = criar_no(NO_TIPO, strdup("inteiro"));
+    }
+#line 1537 "parserArvore2.tab.c"
+    break;
+
+  case 26: /* tipo: TOKEN_REAL  */
+#line 268 "parserArvore2.y"
+                 {
+        yyval = criar_no(NO_TIPO, strdup("real"));
+    }
+#line 1545 "parserArvore2.tab.c"
+    break;
+
+  case 27: /* lista_identificadores: TOKEN_IDENTIFICADOR  */
+#line 275 "parserArvore2.y"
+                        {
+        yyval = criar_no(NO_IDENTIFICADOR, strdup(yytext));
+        yyval->irmao = NULL; // Inicializa o irmão como NULL
+        yyval->num_filhos = 0; // Não tem filhos
+    }
+#line 1555 "parserArvore2.tab.c"
+    break;
+
+  case 28: /* lista_identificadores: lista_identificadores TOKEN_OPERACAO_SEPARADO_IDENTIFICADORES TOKEN_IDENTIFICADOR  */
+#line 280 "parserArvore2.y"
+                                                                                        {
+        No *novo_id = criar_no(NO_IDENTIFICADOR, strdup(yytext));
+        yyval = yyvsp[-2]; // Mantém o primeiro nó
+        
+        // Conecta o novo identificador como irmão do último nó
+        No *ultimo = yyval;
+        while (ultimo->irmao != NULL) {
+            ultimo = ultimo->irmao;
+        }
+        ultimo->irmao = novo_id; // Adiciona o novo identificador como irmão
+    }
+#line 1571 "parserArvore2.tab.c"
+    break;
+
+  case 29: /* expressao: TOKEN_IDENTIFICADOR  */
+#line 299 "parserArvore2.y"
+                        {
+        yyval = criar_no(NO_IDENTIFICADOR, strdup(yytext));
+        yyval->num_filhos = 0; // Sem filhos
+    }
+#line 1580 "parserArvore2.tab.c"
+    break;
+
+  case 30: /* expressao: TOKEN_INTEIRO  */
+#line 303 "parserArvore2.y"
+                    {
+        yyval = criar_no(NO_INTEIRO, strdup(yytext));
+        yyval->num_filhos = 0; // Sem filhos
+    }
+#line 1589 "parserArvore2.tab.c"
+    break;
+
+  case 31: /* expressao: expressao_operacao_soma  */
+#line 307 "parserArvore2.y"
+                              {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1597 "parserArvore2.tab.c"
+    break;
+
+  case 32: /* expressao: expressao_operacao_subtracao  */
+#line 310 "parserArvore2.y"
+                                   {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1605 "parserArvore2.tab.c"
+    break;
+
+  case 33: /* expressao: expressao_operacao_multiplicacao  */
+#line 313 "parserArvore2.y"
+                                       {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1613 "parserArvore2.tab.c"
+    break;
+
+  case 34: /* expressao: expressao_operacao_divisao  */
+#line 316 "parserArvore2.y"
+                                 {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1621 "parserArvore2.tab.c"
+    break;
+
+  case 35: /* expressao: expressao_operacao_e  */
+#line 319 "parserArvore2.y"
+                           {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1629 "parserArvore2.tab.c"
+    break;
+
+  case 36: /* expressao: expressao_operacao_ou  */
+#line 322 "parserArvore2.y"
+                            {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1637 "parserArvore2.tab.c"
+    break;
+
+  case 37: /* expressao: expressao_operacao_maior_que  */
+#line 325 "parserArvore2.y"
+                                   {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1645 "parserArvore2.tab.c"
+    break;
+
+  case 38: /* expressao: expressao_operacao_menor_que  */
+#line 328 "parserArvore2.y"
+                                   {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1653 "parserArvore2.tab.c"
+    break;
+
+  case 39: /* expressao: expressao_operacao_maior_igual  */
+#line 331 "parserArvore2.y"
+                                     {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1661 "parserArvore2.tab.c"
+    break;
+
+  case 40: /* expressao: expressao_operacao_menor_igual  */
+#line 334 "parserArvore2.y"
+                                     {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1669 "parserArvore2.tab.c"
+    break;
+
+  case 41: /* expressao: expressao_operacao_igual  */
+#line 337 "parserArvore2.y"
+                               {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1677 "parserArvore2.tab.c"
+    break;
+
+  case 42: /* expressao: expressao_operacao_diferente  */
+#line 340 "parserArvore2.y"
+                                   {
+        yyval = yyvsp[0]; // A operação já define a estrutura correta
+    }
+#line 1685 "parserArvore2.tab.c"
+    break;
+
+  case 43: /* expressao_operacao_soma: expressao TOKEN_OPERACAO_SOMA expressao  */
+#line 346 "parserArvore2.y"
+                                            {
+        yyval = criar_no(NO_EXPRESSAO, strdup("+"));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1696 "parserArvore2.tab.c"
+    break;
+
+  case 44: /* expressao_operacao_subtracao: expressao TOKEN_OPERACAO_SUBTRACAO expressao  */
+#line 355 "parserArvore2.y"
+                                                 {
+        yyval = criar_no(NO_EXPRESSAO, strdup("-"));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1707 "parserArvore2.tab.c"
+    break;
+
+  case 45: /* expressao_operacao_multiplicacao: expressao TOKEN_OPERACAO_MULTIPLICACAO expressao  */
+#line 364 "parserArvore2.y"
+                                                     {
+        yyval = criar_no(NO_EXPRESSAO, strdup("*"));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1718 "parserArvore2.tab.c"
+    break;
+
+  case 46: /* expressao_operacao_divisao: expressao TOKEN_OPERACAO_DIVISAO expressao  */
+#line 373 "parserArvore2.y"
+                                               {
+        yyval = criar_no(NO_EXPRESSAO, strdup("/"));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1729 "parserArvore2.tab.c"
+    break;
+
+  case 47: /* expressao_operacao_e: expressao TOKEN_OPERACAO_E expressao  */
+#line 382 "parserArvore2.y"
+                                         {
+        yyval = criar_no(NO_EXPRESSAO, strdup("&&")); // Usando "&&" para E lógico
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1740 "parserArvore2.tab.c"
+    break;
+
+  case 48: /* expressao_operacao_ou: expressao TOKEN_OPERACAO_OU expressao  */
+#line 391 "parserArvore2.y"
+                                          {
+        yyval = criar_no(NO_EXPRESSAO, strdup("||")); // Usando "||" para OU lógico
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1751 "parserArvore2.tab.c"
+    break;
+
+  case 49: /* expressao_operacao_maior_que: expressao TOKEN_OPERACAO_MAIOR_QUE expressao  */
+#line 400 "parserArvore2.y"
+                                                 {
+        yyval = criar_no(NO_EXPRESSAO, strdup(">"));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1762 "parserArvore2.tab.c"
+    break;
+
+  case 50: /* expressao_operacao_menor_que: expressao TOKEN_OPERACAO_MENOR_QUE expressao  */
+#line 409 "parserArvore2.y"
+                                                 {
+        yyval = criar_no(NO_EXPRESSAO, strdup("<"));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1773 "parserArvore2.tab.c"
+    break;
+
+  case 51: /* expressao_operacao_maior_igual: expressao TOKEN_OPERACAO_MAIOR_IGUAL expressao  */
+#line 418 "parserArvore2.y"
+                                                   {
+        yyval = criar_no(NO_EXPRESSAO, strdup(">="));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1784 "parserArvore2.tab.c"
+    break;
+
+  case 52: /* expressao_operacao_menor_igual: expressao TOKEN_OPERACAO_MENOR_IGUAL expressao  */
+#line 427 "parserArvore2.y"
+                                                   {
+        yyval = criar_no(NO_EXPRESSAO, strdup("<="));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1795 "parserArvore2.tab.c"
+    break;
+
+  case 53: /* expressao_operacao_igual: expressao TOKEN_OPERACAO_IGUAL expressao  */
+#line 436 "parserArvore2.y"
+                                             {
+        yyval = criar_no(NO_EXPRESSAO, strdup("=="));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1806 "parserArvore2.tab.c"
+    break;
+
+  case 54: /* expressao_operacao_diferente: expressao TOKEN_OPERACAO_DIFERENTE expressao  */
+#line 445 "parserArvore2.y"
+                                                 {
+        yyval = criar_no(NO_EXPRESSAO, strdup("!="));
+        yyval->filhos[0] = yyvsp[-2];
+        yyval->filhos[1] = yyvsp[0];
+        yyval->num_filhos = 2; // Define o número correto de filhos
+    }
+#line 1817 "parserArvore2.tab.c"
+    break;
+
+
+#line 1821 "parserArvore2.tab.c"
 
       default: break;
     }
@@ -1397,9 +2010,23 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 103 "parser.y"
+#line 454 "parserArvore2.y"
  
 
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+        if (!yyin) {
+            perror("Não foi possível abrir o arquivo");
+            return EXIT_FAILURE;
+        }
+    }
+    
+    yyparse();
+    imprimir_arvore(raiz, 0);
+    return EXIT_SUCCESS;
+}
+
 void yyerror(const char *s) {
-    fprintf(stderr, "Erro de análise: %s\n", s);
+    fprintf(stderr, "Erro: %s\n", s);
 }

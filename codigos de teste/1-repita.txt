@@ -1,26 +1,25 @@
-inteiro i, j;
+INTEIRO i, j;
 
 i = 1; j=2;
-repita {
+REPITA{
   i=i+2;
   j=j+1;
-  mostrar(i);
-  mostrar(j);
-} ate i>j;
-mostrar(-1);
-mostrar(i);
-mostrar(j);
-mostrar(-2);
+  MOSTRAR(i);
+  MOSTRAR(j);
+} ATE i>j;
+MOSTRAR(-1);
+MOSTRAR(i);
+MOSTRAR(j);
+MOSTRAR(-2);
 
 i=1;
-repita {
+REPITA{
   i = i +1;
-  mostrar(i);
+  MOSTRAR(i);
   j = 11;
-  repita {
+  REPITA{
 	j=j+1;
-    mostrar(j);
-  } ate j>13;
-} ate i == 3;
-mostrar(-3);
-
+    MOSTRAR(j);
+  } ATE j>13;
+} ATE i == 3;
+MOSTRAR(-3);

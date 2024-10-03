@@ -4,7 +4,11 @@
    que pode se estender por várias linhas.
 */
 
-1 + 2
-"um texto de exemplo"
+1 + 2;
+
+123 + 45.67;
+variavel1;
+variavel_2;
+
 'um caractere'
-123 45.67 variavel1 variavel_2
+"um texto de exemplo"
