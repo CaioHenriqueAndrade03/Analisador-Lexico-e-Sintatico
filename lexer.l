@@ -3,15 +3,9 @@
 #include <stdlib.h>
 #include "parser.tab.h"
 
-
-// Estrutura para armazenar tokens
-typedef struct {
-    int tipo;
-    char* valor;
-} Token;
-
 // Função para imprimir tokens
 void print_token(int token_type, const char* value) {
+    printf("Token lido: ");
     switch (token_type) {
         case TOKEN_INTEIRO: printf("TOKEN_INTEIRO: %s\n", value); break;
         case TOKEN_REAL: printf("TOKEN_REAL: %s\n", value); break;
@@ -45,117 +39,62 @@ void print_token(int token_type, const char* value) {
         case TOKEN_IDENTIFICADOR: printf("TOKEN_IDENTIFICADOR: %s\n", value); break;
         case TOKEN_STRING: printf("TOKEN_STRING: %s\n", value); break;
         case TOKEN_CHAR: printf("TOKEN_CHAR: %s\n", value); break;
-        default: printf("TOKEN DESCONHECIDO\n");
-    }
-}
-
-// Função do analisador sintático
-void analisador_sintatico(Token* tokens, int token_count) {
-    for (int i = 0; i < token_count; i++) {
-        printf("Processando Token %d: Tipo = %d, Valor = %s\n", i, tokens[i].tipo, tokens[i].valor);
+        default: printf("TOKEN DESCONHECIDO: %s\n", value);
     }
 }
 %}
 
 %%
 
-"inteiro"              { return TOKEN_INTEIRO; }
-"real"                 { return TOKEN_REAL; }
-"se"                   { return TOKEN_SE; }
-"entao"                { return TOKEN_ENTAO; }
-"senao"                { return TOKEN_SENAO; }
-"enquanto"             { return TOKEN_ENQUANTO; }
-"repita"               { return TOKEN_REPITA; }
-"ate"                  { return TOKEN_ATE; }
-"ler"                  { return TOKEN_LER; }
-"mostrar"              { return TOKEN_MOSTRAR; }
-"+"                    { return TOKEN_OPERACAO_SOMA; }
-"-"                    { return TOKEN_OPERACAO_SUBTRACAO; }
-"*"                    { return TOKEN_OPERACAO_MULTIPLICACAO; }
-"/"                    { return TOKEN_OPERACAO_DIVISAO; }
-"&&"                   { return TOKEN_OPERACAO_E; }
-"||"                   { return TOKEN_OPERACAO_OU; }
-"<"                    { return TOKEN_OPERACAO_MENOR_QUE; }
-"<="                   { return TOKEN_OPERACAO_MENOR_IGUAL; }
-">"                    { return TOKEN_OPERACAO_MAIOR_QUE; }
-">="                   { return TOKEN_OPERACAO_MAIOR_IGUAL; }
-"=="                   { return TOKEN_OPERACAO_IGUAL; }
-"!="                   { return TOKEN_OPERACAO_DIFERENTE; }
-"="                    { return TOKEN_OPERACAO_ATRIBUICAO; } 
-";"                    { return TOKEN_OPERACAO_SEPARADOR_COMANDO; }
-","                    { return TOKEN_OPERACAO_SEPARADO_IDENTIFICADORES; }
-"("                    { return TOKEN_OPERACAO_ABRE_EXPRECAO; }
-")"                    { return TOKEN_OPERACAO_FECHA_EXPRECAO; }
-"{"                    { return TOKEN_OPERACAO_INICIA_BLOCO_COMANDO; }
-"}"                    { return TOKEN_OPERACAO_FECHA_BLOCO_COMANDO; }
-
-\"([^"\\]|\\.)*\"     { return TOKEN_STRING; }
-\'([^'\\]|\\.)*\'     { return TOKEN_CHAR; }
+"inteiro"              { print_token(TOKEN_INTEIRO, yytext); return TOKEN_INTEIRO; }
+"real"                 { print_token(TOKEN_REAL, yytext); return TOKEN_REAL; }
+"se"                   { print_token(TOKEN_SE, yytext); return TOKEN_SE; }
+"entao"                { print_token(TOKEN_ENTAO, yytext); return TOKEN_ENTAO; }
+"senao"                { print_token(TOKEN_SENAO, yytext); return TOKEN_SENAO; }
+"enquanto"             { print_token(TOKEN_ENQUANTO, yytext); return TOKEN_ENQUANTO; }
+"repita"               { print_token(TOKEN_REPITA, yytext); return TOKEN_REPITA; }
+"ate"                  { print_token(TOKEN_ATE, yytext); return TOKEN_ATE; }
+"ler"                  { print_token(TOKEN_LER, yytext); return TOKEN_LER; }
+"mostrar"              { print_token(TOKEN_MOSTRAR, yytext); return TOKEN_MOSTRAR; }
+"+"                    { print_token(TOKEN_OPERACAO_SOMA, yytext); return TOKEN_OPERACAO_SOMA; }
+"-"                    { print_token(TOKEN_OPERACAO_SUBTRACAO, yytext); return TOKEN_OPERACAO_SUBTRACAO; }
+"*"                    { print_token(TOKEN_OPERACAO_MULTIPLICACAO, yytext); return TOKEN_OPERACAO_MULTIPLICACAO; }
+"/"                    { print_token(TOKEN_OPERACAO_DIVISAO, yytext); return TOKEN_OPERACAO_DIVISAO; }
+"&&"                   { print_token(TOKEN_OPERACAO_E, yytext); return TOKEN_OPERACAO_E; }
+"||"                   { print_token(TOKEN_OPERACAO_OU, yytext); return TOKEN_OPERACAO_OU; }
+"<"                    { print_token(TOKEN_OPERACAO_MENOR_QUE, yytext); return TOKEN_OPERACAO_MENOR_QUE; }
+"<="                   { print_token(TOKEN_OPERACAO_MENOR_IGUAL, yytext); return TOKEN_OPERACAO_MENOR_IGUAL; }
+">"                    { print_token(TOKEN_OPERACAO_MAIOR_QUE, yytext); return TOKEN_OPERACAO_MAIOR_QUE; }
+">="                   { print_token(TOKEN_OPERACAO_MAIOR_IGUAL, yytext); return TOKEN_OPERACAO_MAIOR_IGUAL; }
+"=="                   { print_token(TOKEN_OPERACAO_IGUAL, yytext); return TOKEN_OPERACAO_IGUAL; }
+"!="                   { print_token(TOKEN_OPERACAO_DIFERENTE, yytext); return TOKEN_OPERACAO_DIFERENTE; }
+"="                    { print_token(TOKEN_OPERACAO_ATRIBUICAO, yytext); return TOKEN_OPERACAO_ATRIBUICAO; } 
+";"                    { print_token(TOKEN_OPERACAO_SEPARADOR_COMANDO, yytext); return TOKEN_OPERACAO_SEPARADOR_COMANDO; }
+","                    { print_token(TOKEN_OPERACAO_SEPARADO_IDENTIFICADORES, yytext); return TOKEN_OPERACAO_SEPARADO_IDENTIFICADORES; }
+"("                    { print_token(TOKEN_OPERACAO_ABRE_EXPRECAO, yytext); return TOKEN_OPERACAO_ABRE_EXPRECAO; }
+")"                    { print_token(TOKEN_OPERACAO_FECHA_EXPRECAO, yytext); return TOKEN_OPERACAO_FECHA_EXPRECAO; }
+"{"                    { print_token(TOKEN_OPERACAO_INICIA_BLOCO_COMANDO, yytext); return TOKEN_OPERACAO_INICIA_BLOCO_COMANDO; }
+"}"                    { print_token(TOKEN_OPERACAO_FECHA_BLOCO_COMANDO, yytext); return TOKEN_OPERACAO_FECHA_BLOCO_COMANDO; }
+"\n"                    { printf("Nova linha detectada\n"); }
+<<EOF>>					{printf("FIM DO ARQUIVO\n"); return 0;}
+\"([^"\\]|\\.)*\"     { print_token(TOKEN_STRING, yytext); return TOKEN_STRING; }
+\'([^'\\]|\\.)*\'     { print_token(TOKEN_CHAR, yytext); return TOKEN_CHAR; }
 
 "/*"([^/*]|\*+[^*/])*\*+"/"   { /* Ignora o comentário de bloco */ }
 "//".*                      { /* Ignora o comentário de linha */ }
 
-[a-zA-Z_][a-zA-Z0-9_]* { return TOKEN_IDENTIFICADOR; }
-[0-9]+\.[0-9]+         { return TOKEN_REAL; }
-[0-9]+                 { return TOKEN_INTEIRO; }
+[a-zA-Z_][a-zA-Z0-9_]* { print_token(TOKEN_IDENTIFICADOR, yytext); return TOKEN_IDENTIFICADOR; }
+[0-9]+\.[0-9]+         { print_token(TOKEN_REAL, yytext); return TOKEN_REAL; }
+[0-9]+                 { print_token(TOKEN_INTEIRO, yytext); return TOKEN_INTEIRO; }
 
-[ \t\n]+              ; // Ignora espaços em branco fora de strings e caracteres
+[ \t\n]+              ; // Ignora espaços em branco
+\r                     ; // Ignora o retorno de carro
 
-.                     ; //mostra caracteres que nao foram interpretados
-
+.                     { printf("Caractere desconhecido: '%s' (ASCII: %d)\n", yytext, yytext[0]); }
 
 %%
 
 int yywrap() {
-    return 1;  // Indica que não há mais dados para processar
+    return 1; 
 }
 
-int main(int argc, char **argv) {
-    if (argc < 2) {
-        fprintf(stderr, "Uso: %s <arquivo_de_entrada>\n", argv[0]);
-        return 1;
-    }
-
-    FILE *file = fopen(argv[1], "r");
-    if (!file) {
-        perror("Não foi possível abrir o arquivo de entrada");
-        return 1;
-    }
-
-    yyin = file; // Define o arquivo de entrada para o Flex
-
-    int token;
-    Token tokens[1000]; // Exemplo de array para armazenar tokens
-    int token_count = 0;
-
-    while ((token = yylex()) != 0) {
-    if (token < 0) {
-        fprintf(stderr, "Erro no lexer: caractere não reconhecido.\n");
-        break; // Sai do loop em caso de erro
-    }
-
-    tokens[token_count].tipo = token;
-    tokens[token_count].valor = strdup(yytext); // Copia o valor do token
-    print_token(token, yytext); // Imprime o token
-    token_count++;
-}
-
-if (token_count >= sizeof(tokens)/sizeof(tokens[0])) {
-    fprintf(stderr, "Erro: número máximo de tokens excedido.\n");
-
-}
-
-
-    fclose(file); // Fecha o arquivo de entrada
-
-    // Chama o analisador sintático
-    analisador_sintatico(tokens, token_count);
-
-    yyparse();
-
-    // Liberar memória
-    for (int i = 0; i < token_count; i++) {
-        free(tokens[i].valor);
-    }
-
-    return 0;}
