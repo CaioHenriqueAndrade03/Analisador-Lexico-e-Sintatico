@@ -57,7 +57,7 @@ void imprimir_arvore(No *no, int nivel) {
         printf("  ");
     }
 
-    // Usar um switch ou um array para mapear tipos a strings
+  
     const char *tipo_str;
     switch (no->tipo) {
         case NO_DECLARACAO_VARIAVEL: tipo_str = "Declaração de Variável"; break;
@@ -174,7 +174,7 @@ comando_atribuir:
         $$ = criar_no(NO_ATRIBUICAO, strdup("Atribuição")); 
         $$->filhos[0] = criar_no(NO_IDENTIFICADOR, strdup(yytext)); 
         $$->filhos[1] = $3; 
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 
 
@@ -204,25 +204,25 @@ bloco_comando:
 
 comando_enquanto: 
     TOKEN_ENQUANTO TOKEN_OPERACAO_ABRE_EXPRECAO expressao TOKEN_OPERACAO_FECHA_EXPRECAO TOKEN_OPERACAO_INICIA_BLOCO_COMANDO bloco_comando TOKEN_OPERACAO_FECHA_BLOCO_COMANDO {
-        $$ = criar_no(NO_LOOP, strdup("Enquanto")); // Ajuste no tipo, se necessário
+        $$ = criar_no(NO_LOOP, strdup("Enquanto")); 
         $$->filhos[0] = $3; // Expressão
         $$->filhos[1] = $6; // Bloco de comandos
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     };
 
 
 comando_repita: 
     TOKEN_REPITA bloco_comando TOKEN_ATE expressao {
-        $$ = criar_no(NO_LOOP, strdup("Repita ate")); // Ajuste no tipo, se necessário
+        $$ = criar_no(NO_LOOP, strdup("Repita ate")); 
         $$->filhos[0] = $1; // Bloco
         $$->filhos[1] = $4; // Expressão
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
     | TOKEN_REPITA comando TOKEN_ATE expressao {
-        $$ = criar_no(NO_LOOP, strdup("Repita ate")); // Ajuste no tipo, se necessário
+        $$ = criar_no(NO_LOOP, strdup("Repita ate")); 
         $$->filhos[0] = $2; // Comando
         $$->filhos[1] = $4; // Expressão
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 
 ;
@@ -302,44 +302,32 @@ expressao:
     }
     | TOKEN_INTEIRO {
         $$ = criar_no(NO_INTEIRO, strdup(yytext));
-        $$->num_filhos = 0; // Sem filhos
+        $$->num_filhos = 0; 
     }
     | expressao_operacao_soma {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_subtracao {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_multiplicacao {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_divisao {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_e {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_ou {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_maior_que {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_menor_que {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_maior_igual {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_menor_igual {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_igual {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
     | expressao_operacao_diferente {
-        $$ = $1; // A operação já define a estrutura correta
-    }
+        $$ = $1;}
 ;
 
 expressao_operacao_soma:
@@ -347,7 +335,7 @@ expressao_operacao_soma:
         $$ = criar_no(NO_EXPRESSAO, strdup("+"));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -356,7 +344,7 @@ expressao_operacao_subtracao:
         $$ = criar_no(NO_EXPRESSAO, strdup("-"));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -365,7 +353,7 @@ expressao_operacao_multiplicacao:
         $$ = criar_no(NO_EXPRESSAO, strdup("*"));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -374,7 +362,7 @@ expressao_operacao_divisao:
         $$ = criar_no(NO_EXPRESSAO, strdup("/"));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -383,7 +371,7 @@ expressao_operacao_e:
         $$ = criar_no(NO_EXPRESSAO, strdup("&&")); // Usando "&&" para E lógico
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -392,7 +380,7 @@ expressao_operacao_ou:
         $$ = criar_no(NO_EXPRESSAO, strdup("||")); // Usando "||" para OU lógico
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -401,7 +389,7 @@ expressao_operacao_maior_que:
         $$ = criar_no(NO_EXPRESSAO, strdup(">"));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -410,7 +398,7 @@ expressao_operacao_menor_que:
         $$ = criar_no(NO_EXPRESSAO, strdup("<"));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -419,7 +407,7 @@ expressao_operacao_maior_igual:
         $$ = criar_no(NO_EXPRESSAO, strdup(">="));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -428,7 +416,7 @@ expressao_operacao_menor_igual:
         $$ = criar_no(NO_EXPRESSAO, strdup("<="));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -437,7 +425,7 @@ expressao_operacao_igual:
         $$ = criar_no(NO_EXPRESSAO, strdup("=="));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 
@@ -446,7 +434,7 @@ expressao_operacao_diferente:
         $$ = criar_no(NO_EXPRESSAO, strdup("!="));
         $$->filhos[0] = $1;
         $$->filhos[1] = $3;
-        $$->num_filhos = 2; // Define o número correto de filhos
+        $$->num_filhos = 2; 
     }
 ;
 

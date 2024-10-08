@@ -1,9 +1,9 @@
-inteiro x;
-se x < 10 entao
-    mostrar "x é menor que 10";
+inteiro a, b;
+se a < 10 entao
+    mostrar("a é menor que 10");
 senao
-    mostrar "x é maior ou igual a 10";
-"fim"
+    mostrar("a é maior ou igual a 10");;
 
-
+se b < 5 entao
+    mostrar("b é menor que 5");;
 

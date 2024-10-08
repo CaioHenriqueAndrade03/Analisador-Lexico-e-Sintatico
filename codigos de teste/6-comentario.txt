@@ -5,5 +5,5 @@ real comprimento, altura;
 {
     inteiro x;
     x = 10;
-    mostrar x;
+    mostrar(x);
 }
